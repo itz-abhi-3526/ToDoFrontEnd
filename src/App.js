@@ -5,8 +5,11 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaTrash } from "react-icons/fa";
 import Login from "./Login";
 import Signup from "./Signup";
+import "./App.css";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -22,7 +25,6 @@ function App() {
       }
     );
     const data = await response.json();
-    console.log("Fetched tasks:", data);
     setTasks(Array.isArray(data) ? data : data.tasks || []);
   };
 
@@ -100,63 +102,53 @@ function App() {
   );
 
   const MainApp = () => (
-    <div className="min-h-screen bg-purple-50 flex flex-col">
-      <nav className="bg-purple-500 text-white px-6 py-4 flex justify-between items-center shadow-md">
-        <ul className="flex space-x-4">
-          <li>
-            <a
-              href="#"
-              className="px-4 py-2 rounded-full font-semibold transition-colors duration-200 hover:bg-purple-600 hover:text-white focus:bg-purple-700 focus:outline-none bg-purple-100 text-purple-700 shadow-sm"
-            >
-              Home
-            </a>
-          </li>
-        </ul>
-        <button
-          onClick={logout}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow transition-colors duration-200"
-        >
-          Logout
-        </button>
+    <div className="app-container">
+      <nav className="navbar glass">
+        <div className="nav-content">
+          <a href="/" className="btn home-btn">
+            Home
+          </a>
+          <button className="btn logout-btn" onClick={logout}>
+            Logout
+          </button>
+        </div>
       </nav>
-      <main className="flex-1 p-8">
-        <h1 className="text-4xl font-extrabold text-center mb-8 text-purple-600 drop-shadow">
-          Notionize - Fuel ur Focus!
-        </h1>
+
+      <main className="main-content">
+        <motion.h1
+          className="title"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          Vanta – Clarity in Chaos!
+        </motion.h1>
+
         <form
+          className="task-form"
           onSubmit={(e) => {
             e.preventDefault();
             addTask(e.target[0].value);
             e.target[0].value = "";
           }}
-          className="mb-6 flex gap-2 justify-center"
         >
-          <input
-            type="text"
-            className="p-3 border-2 border-purple-300 rounded-lg w-2/3 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            placeholder="Add a task"
-          />
-          <button
-            type="submit"
-            className="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg transition-colors duration-200"
-          >
+          <input type="text" placeholder="Add a task" required />
+          <button type="submit" className="btn purple">
             Add
           </button>
         </form>
-        <div className="mb-6 flex gap-4 justify-center">
+
+        <div className="filters">
           <select
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="p-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
             value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
           </select>
           <select
-            onChange={(e) => setFilterPriority(e.target.value)}
-            className="p-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
             value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
           >
             <option value="all">All Priorities</option>
             <option value="low">Low</option>
@@ -164,53 +156,51 @@ function App() {
             <option value="high">High</option>
           </select>
         </div>
-        <ul className="space-y-4">
+
+        <ul className="task-list">
           {filteredTasks.map((task) => (
-            <li
+            <motion.li
               key={task._id}
-              className="p-4 bg-white rounded-xl shadow flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:bg-purple-100 hover:shadow-lg transition duration-300"
+              className="task glass"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-              <div className="flex-1">
-                <span className="text-lg text-purple-800">{task.text}</span>
-                <span className="ml-2 text-sm text-gray-500">
+              <div className="task-info">
+                <span>{task.text}</span>
+                <small>
                   ({task.status}, {task.priority})
-                </span>
+                </small>
               </div>
-              <div className="flex gap-2 items-center">
+              <div className="task-actions">
                 <button
-                  onClick={() => updateTaskStatus(task._id, task.status)}
-                  className={`px-3 py-1 rounded-full font-semibold transition-colors duration-200 ${
-                    task.status === "pending"
-                      ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-500"
-                      : "bg-green-400 text-green-900 hover:bg-green-500"
+                  className={`btn ${
+                    task.status === "pending" ? "yellow" : "green"
                   }`}
+                  onClick={() => updateTaskStatus(task._id, task.status)}
                 >
                   {task.status === "pending" ? "Mark Complete" : "Mark Pending"}
                 </button>
                 <select
                   value={task.priority}
                   onChange={(e) => updateTaskPriority(task._id, e.target.value)}
-                  className="p-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
                 </select>
                 <button
+                  className="btn red"
                   onClick={() => deleteTask(task._id)}
-                  className="flex items-center gap-1 px-3 py-1 bg-red-500 hover:bg-red-700 text-white font-semibold rounded-full transition-colors duration-200 ml-2"
-                  title="Delete Task"
                 >
-                  <i className="fas fa-trash" /> Delete
+                  <FaTrash /> Delete
                 </button>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ul>
       </main>
-      <footer className="bg-purple-500 text-white p-4 mt-auto text-center shadow-inner">
-        © 2025 Notionize.
-      </footer>
+
+      <footer className="footer glass">© 2025 Vanta.</footer>
     </div>
   );
 
