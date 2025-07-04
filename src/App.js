@@ -142,7 +142,7 @@ function App() {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="all">All Status</option>
+            <option value="all">All Tasks</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
           </select>
@@ -150,10 +150,10 @@ function App() {
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
           >
-            <option value="all">All Priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="all">Filter</option>
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
           </select>
         </div>
 
