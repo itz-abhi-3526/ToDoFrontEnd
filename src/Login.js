@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "./App.css";
 
 export default function Login({ setToken }) {
   const [authError, setAuthError] = useState("");
@@ -22,6 +23,7 @@ export default function Login({ setToken }) {
     );
     const data = await response.json();
     setAuthLoading(false);
+
     if (data.token) {
       setToken(data.token);
       localStorage.setItem("token", data.token);
@@ -32,65 +34,44 @@ export default function Login({ setToken }) {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-8 bg-purple-50 rounded-lg border border-purple-200">
-      <h2 className="text-3xl font-extrabold mb-6 text-center text-purple-600">
-        Login
-      </h2>
-      {authError && (
-        <div className="mb-3 text-center text-red-600 font-semibold">
-          {authError}
-        </div>
-      )}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          login(username, password);
-        }}
-      >
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className=" p-3
-          border-2
-          border-purple-300
-          rounded
-          w-full
-          mb-4
-          focus:outline-none
-          focus:ring-2
-          focus:ring-purple-400"
-          placeholder="Username"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className=" p-3
-          border-2
-          border-purple-300
-          rounded
-          w-full
-          mb-4
-          focus:outline-none
-          focus:ring-2
-          focus:ring-purple-400"
-          placeholder="password"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded w-full transition-color duration-200 "
+    <div className="login-wrapper">
+      <div className="login-card glass">
+        <h2 className="login-title">Login</h2>
+
+        {authError && <div className="error-message">{authError}</div>}
+
+        <form
+          className="login-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            login(username, password);
+          }}
         >
-          {authLoading ? "Loggin in...." : "Login"}
-        </button>
-      </form>
-      <div className="mt-5 text-center text-gray-700">
-        <span className="text-gray-700">Don't have an account? </span>
-        <Link to="/signup">
-          <span className="text-purple-500 hover:underline font-semibold">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            required
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" className="btn purple">
+            {authLoading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="login-footer">
+          <span>Don't have an account? </span>
+          <Link to="/signup" className="signup-link">
             Signup
-          </span>
-        </Link>
+          </Link>
+        </div>
       </div>
     </div>
   );
